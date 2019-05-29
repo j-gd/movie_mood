@@ -21,6 +21,7 @@ Helpful/not helpful review
 #### Challenges regarding the data set
 Contains seasons and collections
 Does not contain the year of the movie
+Does not contain the genre
 
 #### EDA
 1. Check the distribution of reviews per movie
