@@ -20,8 +20,13 @@ Helpful/not helpful review
 
 #### Challenges regarding the data set
 Contains seasons and collections
+Does not contain the year of the movie
 
 #### EDA
-Check the distribution of reviews per movie
+1. Check the distribution of reviews per movie
 
-Tag all words indicating collections
+Potential improvements:
+Tag all words indicating collections ('collection', 'series [#]', 'volume [#]',
+'double feature', ...)
+
+Top of the list: 'Downton Abbey Season 3', with 12000 reviews
