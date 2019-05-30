@@ -17,6 +17,7 @@ http://jmcauley.ucsd.edu/data/amazon/
 
 #### Good things about the data set
 Helpful/not helpful review
+Multiple reviews by same person
 
 #### Challenges regarding the data set
 Contains seasons and collections
