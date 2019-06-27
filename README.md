@@ -101,3 +101,7 @@ This part is TBD.
 ## Slide presentation
 
 A slide presentation of this readme file is available [here](https://drive.google.com/file/d/1p54SV5ERHJ8YivaocwmhvxZfILem1hSh/view?usp=sharing).
+
+## How to run unit tests
+
+In the project root directory, run: pytest test/unittests.py
