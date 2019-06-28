@@ -12,8 +12,9 @@ class Emotions7():
         emotions_df.set_index('word',inplace=True)
         self.emotions_df = emotions_df
 
-    def transform(self, df, column):
+    def vectorize(self, dataframe, column):
         # Add 7 columns, one for each emotion
+        # TBD
         pass
 
     def get_emotions(self, word_list,normalize=True):
@@ -25,8 +26,12 @@ class Emotions7():
             panda Series with word_list values for:
                 disgust, surprise, neutral, anger, sad, happy, fear
         '''
-        word_emotions = pd.Series(
-            np.zeros((len(self.emotions_df.columns))), index=self.emotions_df.columns)
+
+        word_emotions = np.zeros((len(self.emotions_df.columns)))
+
+        # word_emotions = pd.Series(
+        #     np.zeros((len(self.emotions_df.columns))),
+        #     index=self.emotions_df.columns)
 
         for word in word_list:
             if word in self.emotions_df.index:
