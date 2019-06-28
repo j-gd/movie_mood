@@ -13,9 +13,24 @@ class Emotions7():
         self.emotions_df = emotions_df
 
     def vectorize(self, dataframe, column):
-        # Add 7 columns, one for each emotion
-        # TBD
-        pass
+        '''
+        Create and fill new emotion columns for the text in dataframe[column]
+        INPUT:
+            pandas dataframe
+            column of the dataframe used as input for the emotion detection
+        OUTPUT:
+            none: the input dataframe is modified inplace
+    
+        '''
+        # if set(self.emotions_df.columns).issubset(dataframe.columns):
+        #     print('Replacing existing computations')
+        #     dataframe.drop(self.emotions_df.columns,inplace=True)
+
+        emotions_df = dataframe.apply(lambda row: self.get_emotions(row[column],False),
+                       axis=1, result_type='expand')
+        
+        dataframe =  pd.concat([dataframe,emotions_df],axis=1)
+        # return dataframe
 
     def get_emotions(self, word_list,normalize=True):
         '''
