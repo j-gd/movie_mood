@@ -13,18 +13,21 @@ class Emotions7():
         self.emotions_df = emotions_df
         self.emotions = emotions_df.transpose().to_dict(orient='list')
 
-    def vectorize(self, dataframe, column):
+    def vectorize(self, data, column=None, normalize=True):
         '''
         Create and fill new emotion columns for the text in dataframe[column]
         INPUT:
-            pandas dataframe
+            pandas dataframe or series
             column of the dataframe used as input for the emotion detection: list of words
         OUTPUT:
             none: the input dataframe is modified inplace
     
         '''
-        list_of_lists = dataframe[column].to_numpy()
-        return np.array([self.get_emotions(w_list,normalize=False) for w_list in list_of_lists])
+        if isinstance(data, pd.DataFrame):
+            list_of_lists = data[column].to_numpy()
+        elif isinstance(data, pd.Series):
+            list_of_lists = data
+        return np.array([self.get_emotions(w_list,normalize=normalize) for w_list in list_of_lists])
 
         # return dataframe.apply(lambda row: self.get_emotions(row[column],False),
         #                axis=1, result_type='expand')
