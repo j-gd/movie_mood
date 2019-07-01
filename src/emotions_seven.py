@@ -11,26 +11,26 @@ class Emotions7():
         emotions_df['word'] = emotions_df['word'].apply(lambda w: w.lower().strip())
         emotions_df.set_index('word',inplace=True)
         self.emotions_df = emotions_df
+        self.emotions = emotions_df.transpose().to_dict(orient='list')
 
     def vectorize(self, dataframe, column):
         '''
         Create and fill new emotion columns for the text in dataframe[column]
         INPUT:
             pandas dataframe
-            column of the dataframe used as input for the emotion detection
+            column of the dataframe used as input for the emotion detection: list of words
         OUTPUT:
             none: the input dataframe is modified inplace
     
         '''
-        # if set(self.emotions_df.columns).issubset(dataframe.columns):
-        #     print('Replacing existing computations')
-        #     dataframe.drop(self.emotions_df.columns,inplace=True)
+        list_of_lists = dataframe[column].to_numpy()
+        return np.array([self.get_emotions(w_list,normalize=False) for w_list in list_of_lists])
 
-        emotions_df = dataframe.apply(lambda row: self.get_emotions(row[column],False),
-                       axis=1, result_type='expand')
-        
-        dataframe =  pd.concat([dataframe,emotions_df],axis=1)
-        # return dataframe
+        # return dataframe.apply(lambda row: self.get_emotions(row[column],False),
+        #                axis=1, result_type='expand')
+
+
+        #  pd.concat([dataframe,emotions_df],axis=1)
 
     def get_emotions(self, word_list,normalize=True):
         '''
@@ -41,16 +41,11 @@ class Emotions7():
             panda Series with word_list values for:
                 disgust, surprise, neutral, anger, sad, happy, fear
         '''
-
         word_emotions = np.zeros((len(self.emotions_df.columns)))
 
-        # word_emotions = pd.Series(
-        #     np.zeros((len(self.emotions_df.columns))),
-        #     index=self.emotions_df.columns)
-
         for word in word_list:
-            if word in self.emotions_df.index:
-                word_emotions += self.emotions_df.loc[word,:]
+            if word in self.emotions.keys():
+                word_emotions += self.emotions[word]
 
         if normalize:
             # normalize the vector: best reviews have very small text compared to others
