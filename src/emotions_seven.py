@@ -13,6 +13,7 @@ class Emotions7():
         self.emotions_df = emotions_df
         self.emotions = emotions_df.transpose().to_dict(orient='list')
 
+
     def vectorize(self, data, column=None, normalize=True):
         '''
         Create and fill new emotion columns for the text in dataframe[column]
@@ -20,7 +21,7 @@ class Emotions7():
             pandas dataframe or series
             column of the dataframe used as input for the emotion detection: list of words
         OUTPUT:
-            none: the input dataframe is modified inplace
+            2D numpy array with dimensions (input_data, 7 emotion columns)
     
         '''
         if isinstance(data, pd.DataFrame):
@@ -30,13 +31,9 @@ class Emotions7():
         else:
             print('Unsupported data type')
             return None
+
         return np.array([self.get_emotions(w_list,normalize=normalize) for w_list in list_of_lists])
 
-        # return dataframe.apply(lambda row: self.get_emotions(row[column],False),
-        #                axis=1, result_type='expand')
-
-
-        #  pd.concat([dataframe,emotions_df],axis=1)
 
     def get_emotions(self, word_list,normalize=True):
         '''
@@ -44,8 +41,7 @@ class Emotions7():
             word_list: list of lowercase words
 
         OUTPUT
-            panda Series with word_list values for:
-                disgust, surprise, neutral, anger, sad, happy, fear
+            numpy array of 7 emotion values: disgust, surprise, neutral, anger, sad, happy, fear
         '''
         word_emotions = np.zeros((len(self.emotions_df.columns)))
 
@@ -53,15 +49,15 @@ class Emotions7():
             if word in self.emotions.keys():
                 word_emotions += self.emotions[word]
 
+        length = np.sqrt(np.dot(word_emotions, word_emotions))
+
         if normalize:
             # normalize the vector: best reviews have very small text compared to others
-            length = np.sqrt(np.dot(word_emotions, word_emotions))
-            # print(word_emotions)
-            # print(length)
             if length > 0:
                 word_emotions = word_emotions / length
             else:
-                print('Emotions empty for comment: ', word_list)
+                # print('Emotions empty for comment: ', word_list)
+                pass
         return word_emotions
 
 if __name__ == "__main__":
