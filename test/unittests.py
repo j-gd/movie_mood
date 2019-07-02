@@ -18,12 +18,12 @@ class TestEmotions7(unittest.TestCase):
     def test_class_emotions(self):
         self.assertEqual(list(self.emotions.emotions_df.columns),
             ['disgust', 'surprise', 'neutral', 'anger', 'sad', 'happy', 'fear'])
-        self.assertEqual(
+        self.assertAlmostEqual(
             self.emotions.get_emotions(['abuse', 'aaa'], normalize=False)[6],
-            0.00265863)
-        self.assertEqual(
+            0.00265863,places=8)
+        self.assertAlmostEqual(
             self.emotions.get_emotions(['aaa', 'absorb', 'absorbed'],
-                                       normalize=False)[3], 0.11020408)
+                                       normalize=False)[3], 0.11020408, places=8)
 
 if __name__ == '__main__':
     unittest.main()
