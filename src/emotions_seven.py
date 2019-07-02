@@ -26,7 +26,10 @@ class Emotions7():
         if isinstance(data, pd.DataFrame):
             list_of_lists = data[column].to_numpy()
         elif isinstance(data, pd.Series):
-            list_of_lists = data
+            list_of_lists = data.to_numpy()
+        else:
+            print('Unsupported data type')
+            return None
         return np.array([self.get_emotions(w_list,normalize=normalize) for w_list in list_of_lists])
 
         # return dataframe.apply(lambda row: self.get_emotions(row[column],False),
@@ -52,9 +55,13 @@ class Emotions7():
 
         if normalize:
             # normalize the vector: best reviews have very small text compared to others
-            word_emotions = word_emotions / np.sqrt(
-                np.dot(word_emotions, word_emotions))
-
+            length = np.sqrt(np.dot(word_emotions, word_emotions))
+            # print(word_emotions)
+            # print(length)
+            if length > 0:
+                word_emotions = word_emotions / length
+            else:
+                print('Emotions empty for comment: ', word_list)
         return word_emotions
 
 if __name__ == "__main__":
