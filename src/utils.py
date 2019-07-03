@@ -44,7 +44,7 @@ def classifier_report(model, test_X, true_y, label):
     confusion_mat = confusion_matrix(true_y, pred)
     display(Markdown('### Report for {}:'.format(label)))
     display(
-        Markdown('##### Confusion RMSE: {0:.1f}'.format(
+        Markdown('##### Confusion RMSE: {0:.3f}'.format(
             confusion_matrix_rmse(confusion_mat))))
     display(Markdown('#### Confusion Matrix:'))
     print(confusion_mat)
