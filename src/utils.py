@@ -41,8 +41,46 @@ def rmse(y_hat,y,label=None):
 
 def classifier_report(model, test_X, true_y, label):
     pred = model.predict(test_X)
+    confusion_mat = confusion_matrix(true_y, pred)
     display(Markdown('### Report for {}:'.format(label)))
+    display(
+        Markdown('##### Confusion RMSE: {0:.1f}'.format(
+            confusion_matrix_rmse(confusion_mat))))
+    display(Markdown('#### Confusion Matrix:'))
+    print(confusion_mat)
     display(Markdown('#### Classification Report:'))
     print(classification_report(true_y, pred))
-    display(Markdown('#### Confusion Matrix:'))
-    print(confusion_matrix(true_y, pred))
+
+def confusion_matrix_rmse(confusion_matrix):
+    '''
+  INPUT
+  confusion_matrix: square np array
+
+  OUTPUT
+  Returns the square root of the mean squared error, where the error 
+  is the distance to the true label (e.g. a prediction of 3 for a correct answer 
+  of 1 has a distance of (3-1) = 2)
+  '''
+    weights = np.zeros(confusion_matrix.shape)
+
+    for i in range(confusion_matrix.shape[0]):
+        for j in range(confusion_matrix.shape[1]):
+            weights[i][j]=(i-j)*(i-j)
+    # print(np.sum(confusion_matrix))
+    # print(np.sum(weights * confusion_matrix) / np.sum(confusion_matrix))
+    return np.sqrt(np.sum(weights * confusion_matrix) / np.sum(confusion_matrix))
+
+def confusion_rmse(y_true, y_pred):
+    return confusion_matrix_rmse(confusion_matrix(y_true, y_pred))
+
+
+'''
+INPUT:
+  Estimator: model to evaluate
+  X: validation data
+  y: ground truth target for X
+OUTPUT:
+  Returns a floating point number that quantifies the estimator prediction quality on X, 
+  with reference to y. Again, by convention higher numbers are better, so if your scorer 
+  returns loss, that value should be negated.
+'''
