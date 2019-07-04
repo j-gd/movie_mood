@@ -40,16 +40,20 @@ def rmse(y_hat,y,label=None):
 
 
 def classifier_report(model, test_X, true_y, label):
-    pred = model.predict(test_X)
-    confusion_mat = confusion_matrix(true_y, pred)
+    prediction_report(test_X, true_y, model.predict(test_X), label)
+
+def prediction_report(test_x, true_y, pred_y, label):
+    confusion_mat = confusion_matrix(true_y, pred_y)
     display(Markdown('### Report for {}:'.format(label)))
     display(
         Markdown('##### Confusion RMSE: {0:.3f}'.format(
             confusion_matrix_rmse(confusion_mat))))
+    display(
+        Markdown('##### Off diagonal: {0:.2f}'.format(confusion_off_diagonal(confusion_mat))))
     display(Markdown('#### Confusion Matrix:'))
     print(confusion_mat)
     display(Markdown('#### Classification Report:'))
-    print(classification_report(true_y, pred))
+    print(classification_report(true_y, pred_y))
 
 def confusion_matrix_rmse(confusion_matrix):
     '''
@@ -72,6 +76,13 @@ def confusion_matrix_rmse(confusion_matrix):
 
 def confusion_rmse(y_true, y_pred):
     return confusion_matrix_rmse(confusion_matrix(y_true, y_pred))
+
+def confusion_off_diagonal(confusion_matrix):
+    total = np.sum(confusion_matrix)
+    diagonal = 0
+    for i in range(confusion_matrix.shape[0]):
+        diagonal += confusion_matrix[i][i]
+    return (total - diagonal) / total
 
 
 '''
