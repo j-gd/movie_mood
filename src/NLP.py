@@ -45,3 +45,27 @@ class WordBag():
     def keep(self, word):
         cleaned_word = re.sub('[^A-Za-z]+', '', word)
         return cleaned_word not in self.stop_words
+
+
+class AboutMovie():
+    '''
+    Prerequisite: all words are in lowercase
+    '''
+    def __init__(self):
+        self.not_about_movie = set(['amazon', 'amzn', 'dvd', 'vhs', 'hd', 'edition',
+        'blue-ray', 'blueray', 'blu-ray', 'bluray', 'price'])
+
+    def check(self, words):
+        common = set(words) & self.not_about_movie
+        for word in common:
+            if not word in self.not_about_movie:
+                print('problem with', common)
+        return True if len(common) == 0 else False
+
+'''
+Note:
+There seems to be a problem with input: revID AYLFYY8AHPFOW	 asin B0002Z0EXQ
+classified as failing check when it shouldn't be	
+s1 = set(['troy', 'amazing', 'adaption', 'homer', 'illiad', 'rich', 'detail', 'horner', 'brilliant', 'usual', 'and', 'brad', 'pitt', 'and', 'eric', 'bana', 'great', 'job', 'portraying', 'achiles', 'and', 'hector'])
+len(s1 & about_movie.not_about_movie)
+'''
