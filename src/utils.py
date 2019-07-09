@@ -45,11 +45,11 @@ def classifier_report(model, test_X, true_y, label):
 def prediction_report(test_x, true_y, pred_y, label):
     confusion_mat = confusion_matrix(true_y, pred_y)
     display(Markdown('### Report for {}:'.format(label)))
+    # display(
+    #     Markdown('##### Confusion RMSE: {0:.3f}'.format(
+    #         confusion_matrix_rmse(confusion_mat))))
     display(
-        Markdown('##### Confusion RMSE: {0:.3f}'.format(
-            confusion_matrix_rmse(confusion_mat))))
-    display(
-        Markdown('##### Off diagonal: {0:.2f}'.format(confusion_off_diagonal(confusion_mat))))
+        Markdown('##### Off diagonal: {0:.0%}'.format(confusion_off_diagonal(confusion_mat))))
     display(Markdown('#### Confusion Matrix:'))
     print(confusion_mat)
     display(Markdown('#### Classification Report:'))
