@@ -4,9 +4,12 @@ from nltk.tokenize import word_tokenize, sent_tokenize
 from nltk.stem import WordNetLemmatizer
 import re
 
+
 class WordBag():
     def __init__(self):
         self.lemmatizer = WordNetLemmatizer()
+        self.REPLACE_BY_SPACE_RE = re.compile(r'[/(){}\[\]\|@,;]')
+        self.BAD_SYMBOLS_RE = re.compile('[^0-9a-z #+_]')
 
         # Don't remove negations or sense of level
         self.stop_words = set(['then', "you're", 'she', 'yourself', 'or', 'itself', 'does', 'until',
@@ -24,6 +27,21 @@ class WordBag():
         's', 'these', 'an', 'down', 'ours', 'into', 'd', 'having', 'both', 'each',
         'your', 'did', 'how', 'there', 'that', 't', 'i', "that'll", 'any', 'being',
         'ourselves',''])
+
+    def clean_text(self, text, remove_stop_words=False):
+        """
+            text: a string
+            
+            return: modified initial string
+        """
+        text = text.lower()  # lowercase text
+        text = self.REPLACE_BY_SPACE_RE.sub(' ', text)  
+        text = self.BAD_SYMBOLS_RE.sub('', text)
+        text = re.sub(r'\d+', '', text)
+        if remove_stop_words:
+          text = ' '.join(word for word in text.split()
+                        if word not in self.stop_words)  # remove stopwors from text
+        return text
 
     def create(self, reviews, remove_stop_words=True, lemmatize=True):
         return [
