@@ -33,11 +33,12 @@ class WordBag():
         sent_tokens = sent_tokenize(input_string)
         return [self.comment_to_bag_of_words(sent_token) for sent_token in sent_tokens]
 
-    def comment_to_bag_of_words(self, sentence_tokens):
+    def comment_to_bag_of_words(self, sentence_tokens, remove_stop_words=False):
         words = word_tokenize(sentence_tokens)
         words_lower = np.array([word.lower() for word in words])
-        useful_words = words_lower[[self.keep(word) for word in words_lower]]
-        roots = [self.lemmatizer.lemmatize(w) for w in useful_words]
+        if remove_stop_words:
+          words_lower = words_lower[[self.keep(word) for word in words_lower]]
+        roots = [self.lemmatizer.lemmatize(w) for w in words_lower]
         return roots
 
     @staticmethod
