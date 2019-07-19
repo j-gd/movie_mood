@@ -25,8 +25,8 @@ class WordBag():
         'your', 'did', 'how', 'there', 'that', 't', 'i', "that'll", 'any', 'being',
         'ourselves',''])
 
-    def create(self, reviews):
-        return [self.comment_to_bag_of_words(review) for review in reviews]
+    def create(self, reviews, remove_stop_words=False):
+        return [self.comment_to_bag_of_words(review, remove_stop_words) for review in reviews]
 
     def comment_to_sentences(self, comment):
         input_string = self.remove_accents(comment)
@@ -37,7 +37,7 @@ class WordBag():
         words = word_tokenize(sentence_tokens)
         words_lower = np.array([word.lower() for word in words])
         if remove_stop_words:
-          words_lower = words_lower[[self.keep(word) for word in words_lower]]
+            words_lower = words_lower[[self.keep(word) for word in words_lower]]
         roots = [self.lemmatizer.lemmatize(w) for w in words_lower]
         return roots
 
