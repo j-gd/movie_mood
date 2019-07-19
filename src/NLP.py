@@ -45,7 +45,7 @@ class WordBag():
                           if word not in self.stop_words_tiny)  # remove stopwors from text
         return text
 
-    def create(self, reviews, remove_stop_words=True, lemmatize=True):
+    def create_word_bag(self, reviews, remove_stop_words=False, lemmatize=True):
         return [
             self.comment_to_bag_of_words(review, remove_stop_words, lemmatize)
             for review in reviews
@@ -56,8 +56,10 @@ class WordBag():
         sent_tokens = sent_tokenize(input_string)
         return [self.comment_to_bag_of_words(sent_token) for sent_token in sent_tokens]
 
-    def comment_to_bag_of_words(self, sentence_tokens, remove_stop_words=False, lemmatize=False):
-        words = word_tokenize(sentence_tokens)
+    # IMPORTANT: Obj-Sub filter relies on the default configs of:
+    # remove_stop_words=False, lemmatize=True
+    def comment_to_bag_of_words(self, sentence, remove_stop_words=False, lemmatize=True):
+        words = word_tokenize(sentence)
         words_lower = np.array([word.lower() for word in words])
         if remove_stop_words:
             words_lower = words_lower[[self.keep(word) for word in words_lower]]
