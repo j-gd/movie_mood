@@ -6,34 +6,64 @@ from collections import defaultdict
 from sklearn.svm import SVC
 from nltk.stem.snowball import SnowballStemmer
 
-## remove special symbols
-def rm_sym(df):
-    df['review'] = df['review'].str.replace("&#039;",'\'')
-    df['review'].head()
-    df['rating_cate'] = ''
-    df.loc[df['rating'] >= 7,'rating_cate'] = 'high'
-    df.loc[df['rating'] <= 4,'rating_cate'] = 'low'
-    df.loc[(df['rating'] > 4) & (df['rating'] < 7),'rating_cate'] = 'medium'
-    return df
+import tensorflow as tf
 
-def clean_text(df_tem3):
-    df_tem3['review'] = df_tem3['review'].str.replace("\"","").str.lower()
-    df_tem3['review'] = df_tem3['review'].str.replace( r"(\\r)|(\\n)|(\\t)|(\\f)|(\.)|(\;)|(\:)|(\!)|(\')|(\?)|(\,)|(\")|(\()|(\))|(\[)|(\])|(&#039;)|(\d\s)|(\d)|(\/)","")
-    df_tem3['review'] = df_tem3['review'].str.replace("\"","").str.lower()
-    df_tem3['review'] = df_tem3['review'].str.replace( r"(\$)|(\-)|(\\)|(\s{2,})"," ")
-    df_tem3['review'].sample(1).iloc[0]
+from tensorflow import tensorflow.keras as keras
 
-    stemmer = SnowballStemmer('english')
-    df_tem3['review'] = df_tem3['review'].apply(lambda x: ' '.join([stemmer.stem(word) for word in x.split(" ")]))
-    return df_tem3
-
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.layers import LSTM
+from keras.layers import Embedding
+from keras.preprocessing import sequence
+from keras.preprocessing.text import Tokenizer
+from keras.layers import Conv1D
+from keras.layers import MaxPool1D
+from keras.layers import Dropout
+from keras.layers import Bidirectional
 
 np.random.seed(9)
 
+MAX_NB_WORDS = 500
+max_review_length = 500
+EMBEDDING_DIM = 160
+
 
 class LSTM():
-  def __init__(self):
-    pass
+    def __init__(self):
+        self.tokenizer = Tokenizer(num_words=MAX_NB_WORDS,
+                      filters='!"#$%&()*+,-./:;<=>?@[\]^_`{|}~',
+                      lower=True,
+                      split=' ',
+                      char_level=False,
+                      oov_token=None,
+                      document_count=0)
 
-  
-  
+    def fit(self, text_list):
+        tokenizer.fit_on_texts(text_list)
+        print('Length of tokenizer word index:', len(tokenizer.word_index))
+
+        nb_words  = min(MAX_NB_WORDS, len(word_index))
+        lstm_out = max_review_length
+
+        model = Sequential()
+        model.add(Embedding(nb_words,EMBEDDING_DIM,input_length=max_review_length))
+        #model.add(Dropout(0.2))
+
+        ## add conv using kernal No.32 and size 3x3, actiation='relu'(rm neg)
+        # model.add(Conv1D(filters=32, kernel_size=3, padding='same', activation='relu'))
+        # model.add(MaxPool1D(pool_size=2))
+        model.add(Bidirectional(LSTM(40, return_sequences=True)))
+        #model.add(Dropout(0.2))
+        model.add(Bidirectional(LSTM(40)))
+        #model.add(Bidirectional(LSTM(20)))
+        #model.add(Attention(max_review_length))
+        model.add(Dense(3, activation = 'softmax'))
+
+        ## one-code mutiple categories targets use 'categorical_crossentropy' not 'binary_crossentropy'
+        model.compile(loss='categorical_crossentropy',optimizer='adam',metrics =['accuracy'])
+            
+    
+    def transform(self, text_list):
+        train_sequences = tokenizer.texts_to_sequences(text_list)
+
+

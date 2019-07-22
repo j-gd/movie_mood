@@ -5,11 +5,11 @@ from nltk.stem import WordNetLemmatizer
 import re
 
 
-class WordBag():
+class Clean():
     def __init__(self):
         self.lemmatizer = WordNetLemmatizer()
-        self.REPLACE_BY_SPACE_RE = re.compile(r'[/(){}\[\]\|@,;\#]')
-        self.BAD_SYMBOLS_RE = re.compile('[^0-9a-z #+_]')
+        self.TO_REPLACE_BY_SPACE_RE = re.compile(r'[/(){}\[\]\|@,;+\#_]')
+        self.TO_REMOVE_RE = re.compile('[^a-z]')
 
         # Don't remove negations or sense of level
         self.stop_words = set(['then', "you're", 'she', 'yourself', 'or', 'itself', 'does', 'until',
@@ -30,16 +30,18 @@ class WordBag():
 
         self.stop_words_tiny = set(['i','a'])
 
-    def clean_text(self, text, remove_stop_words=False):
+    def clean_text(self, text, remove_stop_words=False,remove_accents=False):
         """
             text: a string
             
             return: modified initial string
         """
+        if remove_accents:
+            text = self.remove_accents(text)
         text = text.lower()  # lowercase text
-        text = self.REPLACE_BY_SPACE_RE.sub(' ', text)
-        text = self.BAD_SYMBOLS_RE.sub('', text)
-        text = re.sub(r'\d+', '', text)
+        text = self.TO_REPLACE_BY_SPACE_RE.sub(' ', text)
+        text = self.TO_REMOVE_RE.sub('', text)
+        # text = re.sub(r'\d+', '', text)
         if remove_stop_words:
             text = ' '.join(word for word in text.split()
                           if word not in self.stop_words_tiny)  # remove stopwors from text
@@ -101,4 +103,3 @@ classified as failing check when it shouldn't be
 s1 = set(['troy', 'amazing', 'adaption', 'homer', 'illiad', 'rich', 'detail', 'horner', 'brilliant', 'usual', 'and', 'brad', 'pitt', 'and', 'eric', 'bana', 'great', 'job', 'portraying', 'achiles', 'and', 'hector'])
 len(s1 & about_movie.not_about_movie)
 '''
-
