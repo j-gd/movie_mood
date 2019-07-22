@@ -101,3 +101,4 @@ classified as failing check when it shouldn't be
 s1 = set(['troy', 'amazing', 'adaption', 'homer', 'illiad', 'rich', 'detail', 'horner', 'brilliant', 'usual', 'and', 'brad', 'pitt', 'and', 'eric', 'bana', 'great', 'job', 'portraying', 'achiles', 'and', 'hector'])
 len(s1 & about_movie.not_about_movie)
 '''
+
