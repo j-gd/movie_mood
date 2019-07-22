@@ -15,7 +15,7 @@ class SubjectiveFilter():
         self.obj_model = pickle.load(pickle_in)
         pickle_in.close()
 
-    def transform(self, df, text_col, debug_level=0):  # -> pd.DataFrame:
+    def transform(self, df, text_col, threshold, debug_level=0):  # -> pd.DataFrame:
         '''
         Input:
           df: Pandas dataframe
@@ -39,11 +39,11 @@ class SubjectiveFilter():
 
         # Figure out which sentences are subjective
         obj_X = self.obj_tfidf.transform(sentences['sentence']).todense()
-        y_test = self.obj_model.predict(obj_X)
+        y_test = self.obj_model.predict_proba(obj_X)[:,1]
 
         # Remove objective sentences
-        subjective_sentences = sentences[y_test == 1]
-        self.objective_sentences = sentences[y_test == 0]
+        subjective_sentences = sentences[y_test <= threshold]
+        self.objective_sentences = sentences[y_test > threshold]
 
         # Display # lines removed
         diff = len(sentences) - len(subjective_sentences)
