@@ -28,7 +28,7 @@ max_review_length = 500
 EMBEDDING_DIM = 160
 
 
-class LSTM():
+class LSTMModel():
     def __init__(self):
         self.tokenizer = Tokenizer(num_words=MAX_NB_WORDS,
                       filters='!"#$%&()*+,-./:;<=>?@[\]^_`{|}~',
