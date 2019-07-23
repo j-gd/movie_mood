@@ -53,17 +53,18 @@ class SubjectiveFilter():
         else:
             y_test = self.obj_model.predict_proba(obj_X)[:,0]
         
+
         subjective_sentences = sentences[y_test <= remove_above_threshold]
         self.objective_sentences = sentences[y_test > remove_above_threshold]
-        print('Sentences removed:')
-        display(self.objective_sentences)
+        # print('Sentences removed:')
+        # display(self.objective_sentences)
 
         nb_sentences_removed = sentences.shape[0] - subjective_sentences.shape[0]
 
         # Display # lines removed
         nb_sentences_removed = len(sentences) - len(subjective_sentences)
-        display(Markdown('#### => Removed {0} ({1:.0%}) {2} sentences'.format(
-                nb_sentences_removed, nb_sentences_removed / len(sentences), remove)))
+        # display(Markdown('#### => Removed {0} ({1:.0%}) {2} sentences'.format(
+        #         nb_sentences_removed, nb_sentences_removed / len(sentences), remove)))
 
         # Merge the objective sentences back into comments
         subj_groups = subjective_sentences.groupby(['reviewerID', 'asin'])
