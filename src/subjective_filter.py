@@ -44,9 +44,13 @@ class SubjectiveFilter():
 
         # Remove objective sentences
         if switch:
-            idx_keep = y_test.argsort()[:int((1 - drop_ratio) * round(len(y_test)))]
+            cutoff = int((1 - drop_ratio) * round(len(y_test)))
+            idx_keep = y_test.argsort()[:cutoff]
             subjective_sentences = sentences.iloc[idx_keep]
-            # self.objective_sentences = sentences[y_test <= threshold]
+            # idx_drop = y_test.argsort()[cutoff:]
+            # self.objective_sentences = sentences.iloc[idx_drop]
+            # print('Dropped:')
+            # display(self.objective_sentences)
 
         else:
             subjective_sentences = sentences[y_test <= threshold]
@@ -68,7 +72,7 @@ class SubjectiveFilter():
 
         return subj_reviews #, y_test
 
-    def print_info(self, df, subj_reviews):
+    def print_info(self, df, subj_reviews, debug_level=0):
         # Print info
         review_diff = df.shape[0] - subj_reviews.shape[0]
         display(Markdown('#### => Removed {0} ({1:.0%}) reviews with no emotional content'
