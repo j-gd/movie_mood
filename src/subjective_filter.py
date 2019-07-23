@@ -28,7 +28,12 @@ class SubjectiveFilter():
         .dropna()
 
 
-    def transform(self, sentences, text_col, threshold, debug_level=0,switch=False,drop_ratio=0.1):  # -> pd.DataFrame:
+    def transform(self,
+                  sentences,
+                  text_col,
+                  remove_above_threshold,
+                  debug_level=0,
+                  remove='obj'):  # -> pd.DataFrame:
         '''
         Input:
           df: Pandas dataframe with one sentence per row
@@ -40,26 +45,25 @@ class SubjectiveFilter():
 
         # Figure out which sentences are subjective
         obj_X = self.obj_tfidf.transform(sentences[text_col]).todense()
-        y_test = self.obj_model.predict_proba(obj_X)[:,1]
+
 
         # Remove objective sentences
-        if switch:
-            cutoff = int((1 - drop_ratio) * round(len(y_test)))
-            idx_keep = y_test.argsort()[:cutoff]
-            subjective_sentences = sentences.iloc[idx_keep]
-            # idx_drop = y_test.argsort()[cutoff:]
-            # self.objective_sentences = sentences.iloc[idx_drop]
-            # print('Dropped:')
-            # display(self.objective_sentences)
-
+        if remove == 'obj':
+            y_test = self.obj_model.predict_proba(obj_X)[:,1]
         else:
-            subjective_sentences = sentences[y_test <= threshold]
-            self.objective_sentences = sentences[y_test > threshold]
+            y_test = self.obj_model.predict_proba(obj_X)[:,0]
+        
+        subjective_sentences = sentences[y_test <= remove_above_threshold]
+        self.objective_sentences = sentences[y_test > remove_above_threshold]
+        print('Sentences removed:')
+        display(self.objective_sentences)
+
+        nb_sentences_removed = sentences.shape[0] - subjective_sentences.shape[0]
 
         # Display # lines removed
-        diff = len(sentences) - len(subjective_sentences)
-        display(Markdown('#### => Removed {0} ({1:.0%}) objective sentences'.format(
-                diff, diff / len(sentences))))
+        nb_sentences_removed = len(sentences) - len(subjective_sentences)
+        display(Markdown('#### => Removed {0} ({1:.0%}) {2} sentences'.format(
+                nb_sentences_removed, nb_sentences_removed / len(sentences), remove)))
 
         # Merge the objective sentences back into comments
         subj_groups = subjective_sentences.groupby(['reviewerID', 'asin'])
@@ -70,7 +74,7 @@ class SubjectiveFilter():
                         subj_reviews_stars,
                         how='inner', on=['reviewerID', 'asin']).reset_index()
 
-        return subj_reviews #, y_test
+        return subj_reviews, nb_sentences_removed  #, y_test
 
     def print_info(self, df, subj_reviews, debug_level=0):
         # Print info
