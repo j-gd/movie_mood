@@ -15,7 +15,7 @@ class SubjectiveFilter():
         self.obj_model = pickle.load(pickle_in)
         pickle_in.close()
 
-    def transform(self, df, text_col, threshold, debug_level=0):  # -> pd.DataFrame:
+    def transform(self, df, text_col, threshold, debug_level=0,switch=False):  # -> pd.DataFrame:
         '''
         Input:
           df: Pandas dataframe
@@ -25,8 +25,7 @@ class SubjectiveFilter():
           A pandas dataframe with objective sentences removed 
         '''
 
-        df['sentence'] = df['reviewText'].map(
-            sent_tokenize)
+        df['sentence'] = df['reviewText'].map(sent_tokenize)
 
         # Create a dataframe with one line per sentence
         sentences = df['sentence'] \
@@ -42,8 +41,13 @@ class SubjectiveFilter():
         y_test = self.obj_model.predict_proba(obj_X)[:,1]
 
         # Remove objective sentences
-        subjective_sentences = sentences[y_test <= threshold]
-        self.objective_sentences = sentences[y_test > threshold]
+        if switch:
+          subjective_sentences = sentences[y_test > threshold]
+          self.objective_sentences = sentences[y_test <= threshold]
+
+        else:
+          subjective_sentences = sentences[y_test <= threshold]
+          self.objective_sentences = sentences[y_test > threshold]
 
         # Display # lines removed
         diff = len(sentences) - len(subjective_sentences)
