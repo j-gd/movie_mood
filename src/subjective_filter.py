@@ -66,7 +66,7 @@ class SubjectiveFilter():
                         subj_reviews_stars,
                         how='inner', on=['reviewerID', 'asin']).reset_index()
 
-        return subj_reviews, y_test
+        return subj_reviews #, y_test
 
     def print_info(self, df, subj_reviews):
         # Print info
