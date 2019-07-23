@@ -22,7 +22,7 @@ class SubjectiveFilter():
         return df['sentence'] \
         .apply(pd.Series) \
         .merge(df, left_index = True, right_index = True) \
-        .drop(['sentence'], axis = 1) \
+        .drop(['sentence','reviewText'], axis = 1) \
         .melt(id_vars = ['reviewerID', 'asin','overall'], value_name = 'sentence') \
         .drop(['variable'], axis = 1) \
         .dropna()
@@ -39,7 +39,6 @@ class SubjectiveFilter():
         '''
 
         # Figure out which sentences are subjective
-        print(sentences.keys())
         obj_X = self.obj_tfidf.transform(sentences[text_col]).todense()
         y_test = self.obj_model.predict_proba(obj_X)[:,1]
 
