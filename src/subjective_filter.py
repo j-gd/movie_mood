@@ -15,20 +15,11 @@ class SubjectiveFilter():
         self.obj_model = pickle.load(pickle_in)
         pickle_in.close()
 
-    def transform(self, df, text_col, threshold, debug_level=0,switch=False):  # -> pd.DataFrame:
-        '''
-        Input:
-          df: Pandas dataframe
-          text_col: text column name
-
-        Output:
-          A pandas dataframe with objective sentences removed 
-        '''
-
+    def to_one_sent_per_row(self, df):
         df['sentence'] = df['reviewText'].map(sent_tokenize)
 
         # Create a dataframe with one line per sentence
-        sentences = df['sentence'] \
+        return df['sentence'] \
         .apply(pd.Series) \
         .merge(df, left_index = True, right_index = True) \
         .drop(['sentence'], axis = 1) \
@@ -36,18 +27,31 @@ class SubjectiveFilter():
         .drop(['variable'], axis = 1) \
         .dropna()
 
+
+    def transform(self, sentences, text_col, threshold, debug_level=0,switch=False,drop_ratio=0.1):  # -> pd.DataFrame:
+        '''
+        Input:
+          df: Pandas dataframe with one sentence per row
+          text_col: text column name
+
+        Output:
+          A pandas dataframe with objective sentences removed 
+        '''
+
         # Figure out which sentences are subjective
-        obj_X = self.obj_tfidf.transform(sentences['sentence']).todense()
+        print(sentences.keys())
+        obj_X = self.obj_tfidf.transform(sentences[text_col]).todense()
         y_test = self.obj_model.predict_proba(obj_X)[:,1]
 
         # Remove objective sentences
         if switch:
-          subjective_sentences = sentences[y_test > threshold]
-          self.objective_sentences = sentences[y_test <= threshold]
+            idx_keep = y_test.argsort()[:int((1 - drop_ratio) * round(len(y_test)))]
+            subjective_sentences = sentences.iloc[idx_keep]
+            # self.objective_sentences = sentences[y_test <= threshold]
 
         else:
-          subjective_sentences = sentences[y_test <= threshold]
-          self.objective_sentences = sentences[y_test > threshold]
+            subjective_sentences = sentences[y_test <= threshold]
+            self.objective_sentences = sentences[y_test > threshold]
 
         # Display # lines removed
         diff = len(sentences) - len(subjective_sentences)
@@ -56,12 +60,16 @@ class SubjectiveFilter():
 
         # Merge the objective sentences back into comments
         subj_groups = subjective_sentences.groupby(['reviewerID', 'asin'])
-        subj_reviews_sentences = subj_groups['sentence'].agg(self._merge_sentences)
+        subj_reviews_sentences = subj_groups[text_col].agg(
+            self._merge_sentences)
         subj_reviews_stars = subj_groups['overall'].mean()
         subj_reviews = pd.merge(subj_reviews_sentences,
                         subj_reviews_stars,
                         how='inner', on=['reviewerID', 'asin']).reset_index()
 
+        return subj_reviews, y_test
+
+    def print_info(self, df, subj_reviews):
         # Print info
         review_diff = df.shape[0] - subj_reviews.shape[0]
         display(Markdown('#### => Removed {0} ({1:.0%}) reviews with no emotional content'
@@ -83,7 +91,6 @@ class SubjectiveFilter():
             display(Markdown('##### A few objective sentences removed:'))
             display(self.objective_sentences[:debug_level+1])
 
-        return subj_reviews
 
     def _add_space(self, sentence):
         # Add space at the beginning of each sentence to help tokenizer recognize words
