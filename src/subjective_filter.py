@@ -63,7 +63,7 @@ class SubjectiveFilter():
         # print('length',len(y_test))
         cutoff = int(round((1 - remove_fraction) * len(y_test)))
         # print(cutoff)
-        if cutoff == len(y_test):
+        if cutoff == 0:
             # print('skipping this review, not enough sentences')
             return sentences, -1
 
@@ -77,10 +77,10 @@ class SubjectiveFilter():
         # display(Markdown('### Dropped:'))
         # display( sentences.iloc[y_test.argsort()[-(len(y_test) - cutoff):]])
 
-        nb_sentences_removed = sentences.shape[0] - subjective_sentences.shape[0]
-
         # Display # lines removed
         nb_sentences_removed = len(sentences) - len(subjective_sentences)
+        # print('removing', nb_sentences_removed)
+        # print('keeping', len(subjective_sentences))
         # display(Markdown('#### => Removed {0} ({1:.0%}) {2} sentences'.format(
         #         nb_sentences_removed, nb_sentences_removed / len(sentences), remove)))
 
@@ -89,6 +89,8 @@ class SubjectiveFilter():
         subj_reviews_sentences = subj_groups[text_col].agg(
             self._merge_sentences)
         subj_reviews_stars = subj_groups['overall'].mean()
+        # display(subj_reviews_sentences.columns)
+        # display(subj_reviews_stars.columns)
         subj_reviews = pd.merge(subj_reviews_sentences,
                         subj_reviews_stars,
                         how='inner', on=['reviewerID', 'asin']).reset_index()
