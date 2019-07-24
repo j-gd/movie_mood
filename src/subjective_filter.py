@@ -31,7 +31,7 @@ class SubjectiveFilter():
     def transform(self,
                   sentences,
                   text_col,
-                  remove_above_threshold,
+                  remove_fraction,
                   debug_level=0,
                   remove='obj'):  # -> pd.DataFrame:
         '''
@@ -52,19 +52,30 @@ class SubjectiveFilter():
             y_test = self.obj_model.predict_proba(obj_X)[:,1]
         else:
             y_test = self.obj_model.predict_proba(obj_X)[:,0]
-        
 
-        subjective_sentences = sentences[y_test <= remove_above_threshold]
-        self.objective_sentences = sentences[y_test > remove_above_threshold]
-        # print('Sentences removed:')
-        # display(self.objective_sentences)
+        print('length',len(y_test))
+        cutoff = int(round((1 - remove_fraction) * len(y_test)))
+        print(cutoff)
+        if cutoff == len(y_test):
+          print('skipping this review, not enough sentences')
+          return sentences, -1
+
+        idx_keep = y_test.argsort()[:cutoff]
+        print(idx_keep)
+        subjective_sentences = sentences.iloc[idx_keep]
+
+        display(Markdown('### Kept:'))
+        display(subjective_sentences)
+
+        display(Markdown('### Dropped:'))
+        display( sentences.iloc[y_test.argsort()[-(len(y_test) - cutoff):]])
 
         nb_sentences_removed = sentences.shape[0] - subjective_sentences.shape[0]
 
         # Display # lines removed
         nb_sentences_removed = len(sentences) - len(subjective_sentences)
-        # display(Markdown('#### => Removed {0} ({1:.0%}) {2} sentences'.format(
-        #         nb_sentences_removed, nb_sentences_removed / len(sentences), remove)))
+        display(Markdown('#### => Removed {0} ({1:.0%}) {2} sentences'.format(
+                nb_sentences_removed, nb_sentences_removed / len(sentences), remove)))
 
         # Merge the objective sentences back into comments
         subj_groups = subjective_sentences.groupby(['reviewerID', 'asin'])
