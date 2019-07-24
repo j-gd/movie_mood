@@ -3,6 +3,7 @@ import pandas as pd
 from nltk.tokenize import sent_tokenize
 from IPython.display import Markdown, display
 import pickle
+import warnings
 
 
 class SubjectiveFilter():
@@ -16,6 +17,7 @@ class SubjectiveFilter():
         pickle_in.close()
 
     def to_one_sent_per_row(self, df):
+        warnings.simplefilter("ignore")
         df['sentence'] = df['reviewText'].map(sent_tokenize)
 
         # Create a dataframe with one line per sentence
@@ -42,6 +44,11 @@ class SubjectiveFilter():
         Output:
           A pandas dataframe with objective sentences removed 
         '''
+        warnings.simplefilter("ignore")
+
+        if sentences.shape[0] == 0:
+            # print('skipping this review, not enough sentences')
+            return sentences, -1
 
         # Figure out which sentences are subjective
         obj_X = self.obj_tfidf.transform(sentences[text_col]).todense()
@@ -53,29 +60,29 @@ class SubjectiveFilter():
         else:
             y_test = self.obj_model.predict_proba(obj_X)[:,0]
 
-        print('length',len(y_test))
+        # print('length',len(y_test))
         cutoff = int(round((1 - remove_fraction) * len(y_test)))
-        print(cutoff)
+        # print(cutoff)
         if cutoff == len(y_test):
-          print('skipping this review, not enough sentences')
-          return sentences, -1
+            # print('skipping this review, not enough sentences')
+            return sentences, -1
 
         idx_keep = y_test.argsort()[:cutoff]
-        print(idx_keep)
+        # print(idx_keep)
         subjective_sentences = sentences.iloc[idx_keep]
 
-        display(Markdown('### Kept:'))
-        display(subjective_sentences)
+        # display(Markdown('### Kept:'))
+        # display(subjective_sentences)
 
-        display(Markdown('### Dropped:'))
-        display( sentences.iloc[y_test.argsort()[-(len(y_test) - cutoff):]])
+        # display(Markdown('### Dropped:'))
+        # display( sentences.iloc[y_test.argsort()[-(len(y_test) - cutoff):]])
 
         nb_sentences_removed = sentences.shape[0] - subjective_sentences.shape[0]
 
         # Display # lines removed
         nb_sentences_removed = len(sentences) - len(subjective_sentences)
-        display(Markdown('#### => Removed {0} ({1:.0%}) {2} sentences'.format(
-                nb_sentences_removed, nb_sentences_removed / len(sentences), remove)))
+        # display(Markdown('#### => Removed {0} ({1:.0%}) {2} sentences'.format(
+        #         nb_sentences_removed, nb_sentences_removed / len(sentences), remove)))
 
         # Merge the objective sentences back into comments
         subj_groups = subjective_sentences.groupby(['reviewerID', 'asin'])
