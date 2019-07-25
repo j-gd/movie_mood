@@ -8,7 +8,6 @@ def split_n_lower(text):
     return [word.lower() for word in words]
 
 
-
 support_keywords = {'dvd': 1, 'vhs': 1,'edition': 1, 'blue-ray': 1, 'blueray': 1,
                     'blu-ray': 1, 'bluray': 1, 'price': 1}
 
