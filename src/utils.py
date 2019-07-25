@@ -2,6 +2,8 @@ from nltk.tokenize import word_tokenize
 import numpy as np
 from IPython.display import Markdown, display
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from nltk.tokenize import sent_tokenize
+
 
 def split_n_lower(text):
     words = word_tokenize(text)
@@ -83,14 +85,8 @@ def confusion_off_diagonal(confusion_matrix):
         diagonal += confusion_matrix[i][i]
     return (total - diagonal) / total
 
+def _nb_sentences(string):
+    return len(sent_tokenize(string))
 
-'''
-INPUT:
-  Estimator: model to evaluate
-  X: validation data
-  y: ground truth target for X
-OUTPUT:
-  Returns a floating point number that quantifies the estimator prediction quality on X, 
-  with reference to y. Again, by convention higher numbers are better, so if your scorer 
-  returns loss, that value should be negated.
-'''
+def nb_sentences(ds):
+    return ds.map(_nb_sentences)
