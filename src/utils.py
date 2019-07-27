@@ -9,18 +9,21 @@ def split_n_lower(text):
     words = word_tokenize(text)
     return [word.lower() for word in words]
 
-
+# Support detection
 support_keywords = frozenset(['dvd', 'vhs','edition', 'blue-ray', 'blueray',
-                    'blu-ray', 'bluray', 'price', 'amazon', 'amzn', 'amazn', 'ship'])
+                    'blu-ray', 'bluray', 'price', 'amazon', 'amzn', 'amazn', 'ship','shipped'])
 
-def not_about_support(word_list):
-    # print(word_list)
-    for word in word_list:
-        if word in support_keywords:
-            return False
+def _list_not_about_support(word_list):
+    return len(support_keywords & set(word_list)) == 0
 
-    return True
+def _string_not_about_support(string):
+    return _list_not_about_support(split_n_lower(string))
 
+def not_about_support(ds):
+    return ds.map(_string_not_about_support)
+
+
+# Measures
 def rmse_train_cv(model, X_train, X_cv, y_train, y_cv):
     display(Markdown('### RMSE for {} on {}:'.format(type(model).__name__)))
     rmse(model.predict(X_train), y_train, 'Training:')
