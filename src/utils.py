@@ -10,13 +10,13 @@ def split_n_lower(text):
     return [word.lower() for word in words]
 
 
-support_keywords = {'dvd': 1, 'vhs': 1,'edition': 1, 'blue-ray': 1, 'blueray': 1,
-                    'blu-ray': 1, 'bluray': 1, 'price': 1}
+support_keywords = frozenset(['dvd', 'vhs','edition', 'blue-ray', 'blueray',
+                    'blu-ray', 'bluray', 'price', 'amazon', 'amzn', 'amazn', 'ship'])
 
 def not_about_support(word_list):
     # print(word_list)
     for word in word_list:
-        if word in support_keywords.keys():
+        if word in support_keywords:
             return False
 
     return True
