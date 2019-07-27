@@ -59,7 +59,13 @@ class StarRater():
         }
 
 
-    def predict_and_report(self, case, remove, pct, report_file):
+    def predict_and_report(
+            self,
+            case,
+            report_file,
+            remove='None',
+            pct='0',
+    ):
         print('Starting case {} {} {}'.format(case, remove, pct))
         print (str(datetime.datetime.now()))
         self.report['case'].append(case)
@@ -67,7 +73,7 @@ class StarRater():
         self.report['percent'].append(pct)
         root = 'reviews_wout_top_' + pct + 'pct_' + remove
         if case == 'A':
-            pickle_in = open(self.data_path + root + '_A.pkl', "rb")
+            pickle_in = open(self.data_path + 'reviews_A.pkl', "rb")
             movie_reviews = pickle.load(pickle_in)
         else:
             pickle_in = open(self.data_path + root + '_B.pkl', "rb")
