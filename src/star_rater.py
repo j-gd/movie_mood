@@ -156,4 +156,4 @@ class StarRater():
         #                 print(key)
         #                 print(val)
 
-        pd.DataFrame(self.report).to_excel(xl_report)
+        pd.DataFrame(self.report).to_excel(report_file)
