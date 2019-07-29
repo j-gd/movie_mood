@@ -1,6 +1,4 @@
-# Movie Mood
-
-Finding emotions in movies via reviews
+# Movie Mood: finding emotions in movies via reviews
 
 ## Objective
 
