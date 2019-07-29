@@ -29,11 +29,16 @@ Reviews with strong happy feelings have higher ratings than others:
 
 It makes sense that reviewers' feelings correspond to ratings. However, emotions in movies should be less related to reviewers' ratings, as there are good scary movies out there!
 
-So I built a classifier to differentiate reviewer feelings from plot sentences, and built a sentiment predictor model to test the classifier. I computed the accuracy of the sentiment analysis model after the classifier removed either reviewer feelings or plot sentences. I found that removing sentences with reviewer feelings (<span style="color:blue">blue bars</span> below) reduced the accuracy of the sentiment predictor much more than by removing plot-related sentences (<span style="color:red">red bars</span> below): 
+So I built a classifier to differentiate reviewer feelings from plot sentences, and built a sentiment predictor model to test the classifier. I computed the accuracy of the sentiment analysis model after the classifier removed either reviewer feelings or plot sentences. I found that removing sentences with reviewer feelings (<span style="color:blue">blue bars</span> below) reduced the accuracy of the sentiment predictor much more than by removing plot-related sentences (<span style="color:red">red bars</span> below):
 
 ![Accuracy of sentiment predictor as sentences are removed](./images/accuracy_sents_removed.png)
 
 It makes sense: reviewers' feelings are more connected to ratings than feelings in reviews are.
+
+## Next steps
+
+* Implement an LSTM model to better differentiate reviewer emotions & emotions in movies
+* Create the emotion-driven movie selection UI
 
 ## Technical details
 
