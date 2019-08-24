@@ -49,7 +49,8 @@ The height differences between the blue and red lines in the graph above show th
 
 [Notebook that creates a balanced data set to train the sentiment analysis model](./1_create_training_set_of_reviews_w_balanced_ratings.ipynb)
 [Notebook to create shortened reviews with reviewer or plot emotions removed](./2_Remove_some_sentences.ipynb)
-
+[Notebook that runs the sentiment analysis model on shortened reviews](./3_A_B_test.ipynb)
+[Notebook that displays the hortened reviews testing results](./4_AB_testing_result_analysis.ipynb)
 
 ## Next steps
 
