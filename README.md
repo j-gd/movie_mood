@@ -6,7 +6,8 @@ To extract emotions contained in movies, from movie reviews, filtering out plot 
 
 ## How the objective was achieved
 
-Given a review such as: ‘<span style="color:red">Great movie!</span><span style="color:green"> Takes place in an isolated outpost in the galaxy.</span> <span style="color:blue">The hero hates aliens.</span> <span style="color:gray">The Blu-ray contains awesome bonus material.</span>’, the goal was to isolate: ‘<span style="color:blue">the hero hates aliens</span>’.
+Given a review such as: ‘<span style="color:red">Great movie!</span><span style="color:green"> Takes place in an isolated outpost in the galaxy.</span> <span style="color:blue">The hero hates aliens.</span> <span style="color:gray">The Blu-ray contains awesome bonus material.</span>’  
+The goal was to isolate: ‘<span style="color:blue">the hero hates aliens</span>’.
 
 #### 1. Removed support-related sentences
 Removed support-related sentences (e.g. ‘<span style="color:gray">The Blu-ray contains awesome bonus material</span>’) via keyword search.
@@ -14,12 +15,13 @@ Removed support-related sentences (e.g. ‘<span style="color:gray">The Blu-ray 
 #### 2. Removed descriptive sentences
 Removed descriptive sentences (‘<span style="color:green">takes place in an isolated outpost in the galaxy</span>’) by vectorizing text into a space of 7 emotions and removing sentences below a threshold.
 
-#### 2. Removed reviewers' feelings
+#### 3. Removed reviewers' feelings
 
 Removed reviewers’ feelings by modeling the differences between feeling descriptions in plot (‘<span style="color:blue">the hero hates aliens</span>’) and the reviewer’s feelings (‘<span style="color:red">great movie!</span>’).
 
-## Other findings
-I used the star ratings associated with the reviews as a way to validate the models I developed. I found that feelings expressed in reviews (‘<span style="color:red">great movie!</span>’ & ‘<span style="color:blue">the hero hates aliens</span>’) correlate positively with ratings:
+## Research steps and findings
+### Emotions correlate with star rating
+I used the star ratings associated with the reviews as a way to validate my investigations. I found that negative emotions expressed in reviews correlate negatively with ratings, and positive emotions correlate positively with ratings:
 
 Reviews with strong scared feelings have lower ratings than others:
 ![Fear level of movies with top 5% fear review content, vs. others](./images/high_fear_content.png)
@@ -27,13 +29,27 @@ Reviews with strong scared feelings have lower ratings than others:
 Reviews with strong happy feelings have higher ratings than others:
 ![Fear level of movies with top 5% happy review content, vs. others](./images/high_happy_content.png)
 
-It makes sense that reviewers' feelings correspond to ratings. However, emotions in movies should be less related to reviewers' ratings, as there are good scary movies out there!
+It makes sense that reviewers' sentiments correspond to ratings. However, emotions in movies should not be very related to reviewers' ratings, as there are good scary movies out there! (there could still be some correlation between emotions in plot and reviewer ratings if, for example, making a good scary movie is generally more difficult than making a happy one)  
 
-So I built a classifier to differentiate reviewer feelings from plot sentences, and built a sentiment predictor model to test the classifier. I computed the accuracy of the sentiment analysis model after the classifier removed either reviewer feelings or plot sentences. I found that removing sentences with reviewer feelings (<span style="color:blue">blue bars</span> below) reduced the accuracy of the sentiment predictor much more than by removing plot-related sentences (<span style="color:red">red bars</span> below):
+The bag-of-words approach above does not allow to differentiate between emotions in plot (‘<span style="color:blue">the hero hates aliens</span>’) and the reviewer’s emotions (‘<span style="color:red">great movie!</span>’).
+
+[Notebook for this section](./amzn_reviews_emotions.ipynb)
+
+### Reviewer emotions vs. plot emotions separation
+
+Since the bag of emotional words approach was not sufficient, I built a classifier to differentiate reviewer feelings from plot sentences.  
+
+I also built a sentiment predictor model to test the classifier: assuming that a reviewers' emotions are the main determining factor of star rating, removing all sentences unrelated to the reviewers' emotions should not impact the ability of a sentiment predictor model to predict the star rating, but removing sentences of reviewers' emotions should.  
+
+I computed the accuracy of the sentiment analysis model after the classifier removed either reviewer feelings or plot sentences. I found that removing sentences with reviewer feelings (<span style="color:blue">blue bars</span> below) reduced the accuracy of the sentiment predictor much more than by removing plot-related sentences (<span style="color:red">red bars</span> below):
 
 ![Accuracy of sentiment predictor as sentences are removed](./images/accuracy_sents_removed.png)
 
-It makes sense: reviewers' feelings are more connected to ratings than feelings in reviews are.
+The height differences between the blue and red lines in the graph above show that my reviewer emotions vs. plot emotions classifier does a fairly good job.
+
+[Notebook that creates a balanced data set to train the sentiment analysis model](./1_create_training_set_of_reviews_w_balanced_ratings.ipynb)
+[Notebook to create shortened reviews with reviewer or plot emotions removed](./2_Remove_some_sentences.ipynb)
+
 
 ## Next steps
 
