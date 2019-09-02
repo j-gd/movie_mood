@@ -9,7 +9,7 @@ from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import precision_recall_fscore_support, confusion_matrix, accuracy_score
 
 # From this project
-from NLPv0 import WordBag, AboutMovie
+from src.NLPv0 import WordBag, AboutMovie
 
 class StarRater():
     def __init__(self):
