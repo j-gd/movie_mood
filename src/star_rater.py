@@ -151,9 +151,4 @@ class StarRater():
         self.report['f1'].append(f1)
         self.report['accuracy'].append(accuracy_score(y_test, y_pred, normalize=True))
 
-        #             for key, val in self.report.items():
-        #                 print(' ')
-        #                 print(key)
-        #                 print(val)
-
         pd.DataFrame(self.report).to_excel(report_file)
