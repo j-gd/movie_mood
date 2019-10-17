@@ -17,9 +17,9 @@ Removed support-related sentences (e.g. ‘<span style="color:gray">The Blu-ray 
 
 Removed descriptive sentences (‘<span style="color:green">takes place in an isolated outpost in the galaxy</span>’) by vectorizing text into a space of 7 emotions and removing sentences below a threshold.
 
-#### 3. Removed reviewers' judging sentences
+#### 3. Removed sentences that contain only reviewers' feelings
 
-Removed reviewers’ sentences that included only their judgements about the movie, by modeling the differences between feeling descriptions in plot (‘<span style="color:blue">the hero hates aliens</span>’) and reviewers' judgmental sentences  (‘<span style="color:red">great movie!</span>’).  
+Removed reviewers’ sentences that included only their feelings about the movie, by modeling the differences between feeling descriptions in plot (‘<span style="color:blue">the hero hates aliens</span>’) and sentences solely about reviewers' feelings (‘<span style="color:red">great movie!</span>’).  
 
 ## Findings
 
