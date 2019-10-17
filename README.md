@@ -2,25 +2,36 @@
 
 ## Objective
 
-To extract emotions contained in movies, from movie reviews, filtering out plot descriptions, reviewers emotions about the movie, and comments about the support (Blu-ray…) or shipping. This is the foundation for a search engine that would allow users to select a movie based on the emotions found in the movie by reviewers.
+To extract emotions contained in movies, from movie reviews, filtering out plot descriptions, reviewers emotions about the movie, and comments about the support (Blu-ray…) or shipping. This is the foundation for a search engine that would allow users to select a movie based on the emotions found in the movies, by reviewers.
 
 ## How the objective was achieved
 
 Given a review such as: ‘<span style="color:red">Great movie!</span><span style="color:green"> Takes place in an isolated outpost in the galaxy.</span> <span style="color:blue">The hero hates aliens.</span> <span style="color:gray">The Blu-ray contains awesome bonus material.</span>’  
-The goal was to isolate: ‘<span style="color:blue">the hero hates aliens</span>’.
+The goal was to isolate: ‘<span style="color:blue">the hero hates aliens</span>’. I used the following approach:
 
 #### 1. Removed support-related sentences
+
 Removed support-related sentences (e.g. ‘<span style="color:gray">The Blu-ray contains awesome bonus material</span>’) via keyword search.
 
 #### 2. Removed descriptive sentences
+
 Removed descriptive sentences (‘<span style="color:green">takes place in an isolated outpost in the galaxy</span>’) by vectorizing text into a space of 7 emotions and removing sentences below a threshold.
 
-#### 3. Removed reviewers' feelings
+#### 3. Removed reviewers' judging sentences
 
-Removed reviewers’ feelings by modeling the differences between feeling descriptions in plot (‘<span style="color:blue">the hero hates aliens</span>’) and the reviewer’s feelings (‘<span style="color:red">great movie!</span>’).
+Removed reviewers’ sentences that included only their judgements about the movie, by modeling the differences between feeling descriptions in plot (‘<span style="color:blue">the hero hates aliens</span>’) and reviewers' judgmental sentences  (‘<span style="color:red">great movie!</span>’).  
 
-## Research steps and findings
+## Findings
+
+### Reviewer emotions and emotions in movies are sometimes intertwined
+
+In practice, reviewers combine their emotional reactions with emotions found in movies, sometimes in the same sentence. For example:  
+'a tender and touching drama based on the true story of a troubled african-american's quest to come to terms with his origins.'  
+
+In my modeling, I attempted to keep the sentences with a mix of movie and reviewer emotions by re-classifying mixed sentences like the one above when needed, as I felt the emotions they expressed were highly correlated with emotions in movies.
+
 ### Emotions correlate with star rating
+
 I used the star ratings associated with the reviews as a way to validate my investigations. I found that negative emotions expressed in reviews correlate negatively with ratings, and positive emotions correlate positively with ratings:
 
 Reviews with strong scared feelings have lower ratings than others:
