@@ -82,12 +82,16 @@ I used a dataset of 23,000 keywords labeled with the following 7 emotions: 'disg
 ### Separating reviewer’s feelings from feelings in plot descriptions
 
 #### Reviewer feelings vs. plot classifier
-Used 5,000 sentences from a plot description site, and 5,000 sentences from rotten tomatoes for the labeled data. Cleaned up the labels manually by inspecting data misclassified by the models.
+Used 5,000 sentences from a plot description site, and 5,000 sentences from rotten tomatoes for the labeled data. Cleaned up the labels manually by inspecting data misclassified by the models.  
+
+[Reviewer feelings vs. plot classifier: model tuning notebook](./src/obj_subj_dev/obj_subj_modeling.ipynb)
 
 #### Sentiment classifier
 Created it to validate the reviewer/plot classifier.
 
-Isolated a set of 30,000 movie reviews with 5 sentences and balanced +/- sentiment, from the Amazon data set.
+Isolated a set of 30,000 movie reviews with 5 sentences and balanced +/- sentiment, from the Amazon data set.  
+
+[Sentiment classifier model tuning notebook](./src/obj_subj_dev/pos_neg_modeling.ipynb)
 
 #### For both classifiers
 Performed grid searches with logistic regressors, random forests and gradient boosting classifiers (GBC). Found best results with GBC.
